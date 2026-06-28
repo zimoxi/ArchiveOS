@@ -1,13 +1,23 @@
 # CHANGELOG
 
-## 0.0.1
+## 0.0.3
 
-- 初始化 ArchiveOS / OpenFDAMS 仓库结构
-- 新增项目基础文件
-- 新增 Phase01 项目宪法
-- 新增 Phase02 实体档案室蓝图
-- 新增 Phase03 业务蓝图
-- 新增 Phase04 元数据引擎蓝图
-- 新增 Delivery001
-- 新增 Delivery002
-- 新增 Hermes Git Patch 工作规范
+### 新增
+
+- START_DEVELOPMENT.md
+- CURRENT_CONTEXT.md
+- TASK_QUEUE.md
+- PROJECT_STATE.json
+- VERSION.md
+- ENVIRONMENT.md
+- MIRROR.md
+- RUNBOOK.md
+- .ai/Hermes 控制层
+- Windows First / Linux Ready 标准
+- 国内软件源标准
+- TASK-002W Windows 本地开发环境初始化
+
+### 调整
+
+- 暂停 Docker 作为当前开发入口
+- 当前开发路线调整为 Windows 本地可运行优先

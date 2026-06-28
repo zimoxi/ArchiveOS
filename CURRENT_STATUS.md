@@ -1,23 +1,31 @@
 # CURRENT_STATUS
 
 Project: ArchiveOS / OpenFDAMS  
-Version: 0.0.1  
-Current State: Release 0.0.1 initialized.
+Version: 0.0.3  
+Current State: AI development control layer added. Windows runnable skeleton pending.
 
 ## Completed
 
-- Foundation
-- Phase01 Project Constitution
-- Phase02 Physical Archive Blueprint
-- Phase03 Business Blueprint
-- Phase04 Metadata Engine Blueprint
-- Delivery001
-- Delivery002
+- Release 0.0.1 uploaded to GitHub
+- Foundation verified
+- Release 0.0.2 patch prepared
+- Windows First / Linux Ready decision accepted
 
 ## Current Sprint
 
-Sprint01：初始化工程骨架
+Sprint01：工程骨架开发
+
+## Current Task
+
+TASK-002W：Windows 本地开发环境初始化
+
+## Progress
+
+Foundation: 100%  
+Development Framework: 100%  
+First Runnable Skeleton: 0%  
+Overall Project: 8%
 
 ## Next
 
-执行 `NEXT_ACTION.md`
+Hermes must open `START_DEVELOPMENT.md`.

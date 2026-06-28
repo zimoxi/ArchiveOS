@@ -2,20 +2,24 @@
 
 ## 当前任务
 
-TASK-001：初始化 ArchiveOS 工程仓库
+TASK-002W：Windows 本地开发环境初始化
 
-## Hermes 必须做什么
+## Hermes 启动方式
 
-1. 检查目录结构是否完整。
-2. 初始化 Git 仓库（如果尚未初始化）。
-3. 创建或确认 `.gitignore`。
-4. 保留当前文档结构。
-5. 不写业务代码。
-6. 提交一次 Git Commit。
+不要读取整个仓库。
 
-## 推荐 Commit
+只打开：
+
+```text
+START_DEVELOPMENT.md
+```
+
+并严格按照里面的阅读顺序执行。
+
+## 完成后提交
 
 ```bash
 git add .
-git commit -m "chore: initialize ArchiveOS release 0.0.1"
+git commit -m "feat: initialize Windows runnable development skeleton"
+git push origin main
 ```

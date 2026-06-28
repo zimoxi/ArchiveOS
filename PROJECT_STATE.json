@@ -1,0 +1,49 @@
+{
+  "project": "ArchiveOS / OpenFDAMS",
+  "version": "0.0.3",
+  "updatePack": "0003",
+  "currentRelease": "Release 0.0.3",
+  "currentSprint": "Sprint01",
+  "currentTask": "TASK-002W",
+  "taskTitle": "Windows Native Development Bootstrap",
+  "environment": {
+    "developmentOS": "Windows 11",
+    "python": "3.12",
+    "node": "LTS",
+    "docker": false,
+    "productionTarget": "Ubuntu 24.04 + Docker Compose"
+  },
+  "backend": {
+    "framework": "FastAPI",
+    "status": "not_initialized"
+  },
+  "frontend": {
+    "framework": "Vue 3 + Vite + TypeScript",
+    "status": "not_initialized"
+  },
+  "database": {
+    "engine": "PostgreSQL",
+    "status": "planned"
+  },
+  "mirrors": {
+    "python": "Tsinghua",
+    "node": "npmmirror",
+    "docker": "china mirror configurable"
+  },
+  "mustRead": [
+    "CURRENT_CONTEXT.md",
+    "TASK_QUEUE.md",
+    "NEXT_ACTION.md",
+    "development/sprint01/TASK-002W_windows_development_bootstrap.md",
+    "docs/ENVIRONMENT_STANDARD.md",
+    "docs/MIRROR_STANDARD.md"
+  ],
+  "forbidden": [
+    "Do not use Docker in current task",
+    "Do not implement Archive module",
+    "Do not implement Borrow module",
+    "Do not implement Permission module",
+    "Do not hardcode Windows paths"
+  ],
+  "nextTask": "TASK-003"
+}

@@ -1,11 +1,5 @@
-@echo off
-cd /d "%~dp0..\\backend"
-if not exist ".venv" (
-    echo Creating virtual environment...
-    python -m venv .venv
-)
-call .venv\\Scripts\\activate
-pip install -r requirements.txt -q
-echo Starting OpenFDAMS Backend on http://127.0.0.1:8000
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-pause
+cd backend
+python -m venv venv
+call venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload

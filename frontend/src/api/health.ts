@@ -1,0 +1,5 @@
+import { request } from "./http"
+
+export function getHealth() {
+  return request("http://127.0.0.1:8000/api/v1/health")
+}

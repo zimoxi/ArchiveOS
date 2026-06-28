@@ -1,23 +1,22 @@
 <script setup lang="ts">
+import AppHeader from "./components/AppHeader.vue";
 </script>
 
 <template>
-  <div id="app-root">
-    <h1>OpenFDAMS / ArchiveOS</h1>
-    <p>Windows Development Mode</p>
-  </div>
+  <AppHeader />
+  <main>
+    <router-view />
+  </main>
 </template>
 
 <style>
-#app-root {
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
   font-family: system-ui, -apple-system, sans-serif;
-  text-align: center;
-  padding: 4rem 2rem;
-}
-h1 {
   color: #1a1a2e;
-}
-p {
-  color: #4a4a6a;
 }
 </style>

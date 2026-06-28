@@ -1,7 +1,31 @@
+"""OpenFDAMS Backend — FastAPI entry point."""
+
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI()
+from app.api.routes import api_router
+from app.core.config import settings
 
-@app.get("/health")
-def health():
-    return {"status": "ok", "service": "openfdams-backend"}
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    version=settings.VERSION,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(api_router)
+
+
+@app.get("/")
+def root():
+    return {
+        "project": settings.PROJECT_NAME,
+        "version": settings.VERSION,
+        "docs": "/docs",
+    }

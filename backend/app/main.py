@@ -4,6 +4,7 @@ from app.api.v1.user import router as user_router
 from app.api.v1.archive import router as archive_router
 from app.api.v1.borrow import router as borrow_router
 from app.api.v1.approval import router as approval_router
+from app.api.v1.dashboard import router as dashboard_router
 
 app = FastAPI(title="OpenFDAMS")
 
@@ -12,6 +13,7 @@ app.include_router(user_router, prefix="/api/v1")
 app.include_router(archive_router, prefix="/api/v1")
 app.include_router(borrow_router, prefix="/api/v1")
 app.include_router(approval_router, prefix="/api/v1")
+app.include_router(dashboard_router, prefix="/api/v1")
 
 @app.get("/health")
 def health():

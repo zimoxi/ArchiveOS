@@ -1,8 +1,7 @@
 <template>
   <router-view />
 </template>
-
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: system-ui, -apple-system, sans-serif; color: #1a1a2e; }
+body { font-family: system-ui, -apple-system, sans-serif; color: #1a1a2e; background: #f0f2f5; }
 </style>

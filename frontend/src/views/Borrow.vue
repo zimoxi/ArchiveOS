@@ -10,35 +10,26 @@
       <div class="section">
         <h2>借阅操作</h2>
         <div class="form-row">
-          <input v-model="archiveId" type="text" placeholder="输入档案 ID" />
+          <input v-model="archiveId" type="number" placeholder="档案 ID" />
           <button class="btn-borrow" @click="doBorrow" :disabled="!archiveId || loading">
             {{ loading ? "处理中..." : "借阅" }}
           </button>
-          <button class="btn-return" @click="doReturn" :disabled="!archiveId || loading">
-            归还
-          </button>
+          <button class="btn-return" @click="doReturn" :disabled="!archiveId || loading">归还</button>
         </div>
-      </div>
-
-      <div v-if="result" class="result-section">
-        <h2>操作结果</h2>
-        <div class="result-card" :class="result.ok ? 'result-ok' : 'result-err'">
-          <div class="result-icon">{{ result.ok ? "✅" : "❌" }}</div>
-          <div class="result-msg">{{ result.message }}</div>
-          <div v-if="result.detail" class="result-detail">{{ result.detail }}</div>
-        </div>
+        <p v-if="toast" :class="toast.type === 'ok' ? 'toast-ok' : 'toast-err'">{{ toast.msg }}</p>
       </div>
 
       <div class="history-section">
-        <h2>操作历史</h2>
-        <div v-if="history.length === 0" class="empty">暂无记录</div>
+        <h2>借阅记录 <span class="count">({{ history.length }})</span></h2>
+        <div v-if="historyLoading" class="empty">加载中...</div>
+        <div v-else-if="history.length === 0" class="empty">暂无借阅记录</div>
         <div v-else class="history-list">
-          <div v-for="(h, i) in history" :key="i" class="history-item">
-            <span class="history-action" :class="h.action === '借阅' ? 'tag-borrow' : 'tag-return'">
-              {{ h.action }}
+          <div v-for="h in history" :key="h.id" class="history-item">
+            <span class="history-tag" :class="h.status === 'returned' ? 'tag-returned' : 'tag-active'">
+              {{ h.status === "returned" ? "已归还" : "借阅中" }}
             </span>
-            <span class="history-id">档案 {{ h.archiveId }}</span>
-            <span class="history-status">{{ h.message }}</span>
+            <span class="history-id">档案 #{{ h.archive_id }}</span>
+            <span class="history-date">{{ h.created_at }}</span>
           </div>
         </div>
       </div>
@@ -47,112 +38,93 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue"
-import { borrowArchive, returnArchive } from "../api/borrow"
+import { ref, onMounted } from "vue"
+import { borrowArchive, returnArchive, getBorrowHistory } from "../api/borrow"
 
-const archiveId = ref("")
+const archiveId = ref<number | null>(null)
 const loading = ref(false)
-const result = ref<{ ok: boolean; message: string; detail?: string } | null>(null)
-const history = ref<{ action: string; archiveId: string; message: string }[]>([])
+const historyLoading = ref(true)
+const toast = ref<{ type: string; msg: string } | null>(null)
+const history = ref<{ id: number; archive_id: number; status: string; created_at: string }[]>([])
+
+onMounted(() => loadHistory())
+
+async function loadHistory() {
+  historyLoading.value = true
+  try {
+    const data = await getBorrowHistory()
+    history.value = Array.isArray(data) ? data : []
+  } catch { history.value = [] }
+  finally { historyLoading.value = false }
+}
 
 async function doBorrow() {
   if (!archiveId.value) return
-  loading.value = true
+  loading.value = true; toast.value = null
   try {
     const data = await borrowArchive(archiveId.value)
-    const ok = !data.detail
-    result.value = {
-      ok,
-      message: ok ? "借阅成功" : "借阅失败",
-      detail: JSON.stringify(data),
-    }
-    history.value.unshift({
-      action: "借阅",
-      archiveId: archiveId.value,
-      message: ok ? "成功" : data.detail || "失败",
-    })
-  } catch {
-    result.value = { ok: false, message: "网络错误" }
-  } finally {
-    loading.value = false
-  }
+    if (data.id) { toast.value = { type: "ok", msg: `借阅成功 #${data.id}` }; await loadHistory() }
+    else { toast.value = { type: "err", msg: data.detail || "借阅失败" } }
+  } catch { toast.value = { type: "err", msg: "网络错误" } }
+  finally { loading.value = false }
 }
 
 async function doReturn() {
   if (!archiveId.value) return
-  loading.value = true
+  loading.value = true; toast.value = null
   try {
     const data = await returnArchive(archiveId.value)
-    const ok = !data.detail
-    result.value = {
-      ok,
-      message: ok ? "归还成功" : "归还失败",
-      detail: JSON.stringify(data),
-    }
-    history.value.unshift({
-      action: "归还",
-      archiveId: archiveId.value,
-      message: ok ? "成功" : data.detail || "失败",
-    })
-  } catch {
-    result.value = { ok: false, message: "网络错误" }
-  } finally {
-    loading.value = false
-  }
+    if (data.status === "returned") { toast.value = { type: "ok", msg: "归还成功" }; await loadHistory() }
+    else { toast.value = { type: "err", msg: data.detail || "归还失败" } }
+  } catch { toast.value = { type: "err", msg: "网络错误" } }
+  finally { loading.value = false }
 }
 </script>
 
 <style scoped>
-.borrow-page { min-height: 100vh; background: #f5f5f5; }
+.borrow-page { min-height: 100vh; background: #f0f2f5; }
 .topbar {
-  background: #1a1a2e; color: #fff; padding: 1rem 2rem;
+  background: #1a1a2e; color: #fff; padding: 0.8rem 2rem;
   display: flex; align-items: center; justify-content: space-between;
 }
 .back {
-  background: transparent; border: 1px solid #fff; color: #fff;
-  padding: 0.4rem 1rem; border-radius: 6px; cursor: pointer;
+  background: transparent; border: 1px solid rgba(255,255,255,0.3); color: #fff;
+  padding: 0.3rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;
 }
-.content { padding: 2rem; max-width: 700px; margin: 0 auto; }
-.section, .result-section, .history-section {
-  background: #fff; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+.content { padding: 1.5rem 2rem; max-width: 700px; margin: 0 auto; }
+.section, .history-section {
+  background: #fff; border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
-.section h2, .result-section h2, .history-section h2 {
-  margin-bottom: 1rem; font-size: 1.2rem;
-}
-.form-row { display: flex; gap: 0.75rem; align-items: center; }
+.section h2, .history-section h2 { margin-bottom: 0.75rem; font-size: 1.1rem; }
+.count { color: #888; font-weight: normal; font-size: 0.85rem; }
+.form-row { display: flex; gap: 0.5rem; align-items: center; }
 .form-row input {
-  flex: 1; padding: 0.6rem 1rem; border: 2px solid #e0e0e0;
-  border-radius: 8px; font-size: 1rem; outline: none;
+  flex: 1; padding: 0.5rem 0.75rem; border: 2px solid #e0e0e0;
+  border-radius: 6px; font-size: 0.9rem; outline: none;
 }
 .form-row input:focus { border-color: #4f46e5; }
 .btn-borrow, .btn-return {
-  padding: 0.6rem 1.5rem; border: none; border-radius: 8px;
-  cursor: pointer; font-weight: 600; white-space: nowrap;
+  padding: 0.5rem 1.2rem; border: none; border-radius: 6px;
+  cursor: pointer; font-weight: 600; font-size: 0.85rem;
 }
 .btn-borrow { background: #4f46e5; color: #fff; }
 .btn-borrow:disabled { background: #a5a5d0; cursor: not-allowed; }
 .btn-return { background: #e0e7ff; color: #4f46e5; }
 .btn-return:disabled { background: #f0f0f0; color: #999; cursor: not-allowed; }
-.result-card {
-  padding: 1rem; border-radius: 8px; display: flex; align-items: center; gap: 1rem;
-}
-.result-ok { background: #f0fdf4; border: 1px solid #bbf7d0; }
-.result-err { background: #fef2f2; border: 1px solid #fecaca; }
-.result-icon { font-size: 1.5rem; }
-.result-msg { font-weight: 600; }
-.result-detail { color: #666; font-size: 0.85rem; margin-left: auto; }
+.toast-ok { color: #16a34a; margin-top: 0.5rem; font-size: 0.9rem; }
+.toast-err { color: #dc2626; margin-top: 0.5rem; font-size: 0.9rem; }
 .empty { color: #999; text-align: center; padding: 1.5rem; }
-.history-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.history-list { display: flex; flex-direction: column; gap: 0.4rem; }
 .history-item {
   display: flex; align-items: center; gap: 0.75rem;
-  padding: 0.6rem; background: #f8f9fa; border-radius: 8px;
+  padding: 0.5rem; background: #f8f9fa; border-radius: 6px;
 }
-.history-action {
-  padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600;
+.history-tag {
+  padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;
 }
-.tag-borrow { background: #e0e7ff; color: #4f46e5; }
-.tag-return { background: #f0fdf4; color: #16a34a; }
-.history-id { font-weight: 600; }
-.history-status { color: #666; margin-left: auto; font-size: 0.9rem; }
+.tag-active { background: #e0e7ff; color: #4f46e5; }
+.tag-returned { background: #f0fdf4; color: #16a34a; }
+.history-id { font-weight: 600; font-size: 0.9rem; }
+.history-date { color: #888; margin-left: auto; font-size: 0.8rem; }
 </style>

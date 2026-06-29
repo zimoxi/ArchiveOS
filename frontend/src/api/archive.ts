@@ -1,5 +1,3 @@
-import { request } from "./http"
-
 export async function uploadArchive(file: File) {
   const form = new FormData()
   form.append("file", file)
@@ -11,5 +9,6 @@ export async function uploadArchive(file: File) {
 }
 
 export async function getDashboard() {
-  return request("http://127.0.0.1:8000/api/v1/dashboard")
+  const res = await fetch("http://127.0.0.1:8000/api/v1/dashboard")
+  return res.json()
 }

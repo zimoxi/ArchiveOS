@@ -1,22 +1,8 @@
-<script setup lang="ts">
-import AppHeader from "./components/AppHeader.vue";
-</script>
-
 <template>
-  <AppHeader />
-  <main>
-    <router-view />
-  </main>
+  <router-view />
 </template>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-body {
-  font-family: system-ui, -apple-system, sans-serif;
-  color: #1a1a2e;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: system-ui, -apple-system, sans-serif; color: #1a1a2e; }
 </style>

@@ -1,7 +1,8 @@
-from pydantic_settings import BaseSettings
+import os
 
-class Settings(BaseSettings):
-    APP_NAME: str = "OpenFDAMS"
-    API_PREFIX: str = "/api/v1"
+class Settings:
+    APP_NAME = "OpenFDAMS"
+    ENV = os.getenv("ENV", "dev")
+    DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./dev.db")
 
 settings = Settings()

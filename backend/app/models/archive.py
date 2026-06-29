@@ -8,6 +8,7 @@ class Archive(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
     description = Column(String, default="")
+    category = Column(String, default="")
     file_path = Column(String)
     created_by = Column(Integer)
     created_at = Column(DateTime, default=datetime.utcnow)

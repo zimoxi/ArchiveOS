@@ -22,6 +22,7 @@ def search_archive(
             or_(
                 Archive.title.contains(q),
                 Archive.description.contains(q),
+                Archive.category.contains(q),
             )
         )
     rows = query.order_by(Archive.created_at.desc()).limit(50).all()
@@ -29,7 +30,8 @@ def search_archive(
         {
             "id": r.id,
             "title": r.title,
-            "description": r.description,
+            "description": r.description or "",
+            "category": r.category or "",
             "file_path": r.file_path,
             "created_by": r.created_by,
             "created_at": str(r.created_at),
